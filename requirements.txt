@@ -1,0 +1,6 @@
+flask==2.0.1
+opencv-python==4.5.3.56
+pynput==1.7.3
+cryptography==3.4.7
+Werkzeug==2.0.1
+python-dateutil==2.8.2

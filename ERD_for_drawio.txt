@@ -1,0 +1,17 @@
+# Entities
+App
+Keylogger
+CameraCapture
+KeyloggerCameraApp
+SecureKeylogger
+SecureCameraCapture
+SecureKeyloggerCameraApp
+Index
+
+# Relationships
+App uses Keylogger
+App uses CameraCapture
+App uses KeyloggerCameraApp
+SecureKeylogger uses SecureCameraCapture
+SecureKeylogger uses SecureKeyloggerCameraApp
+Index used by App
